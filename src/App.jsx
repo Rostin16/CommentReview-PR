@@ -1,35 +1,91 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+
+import React, { useState } from 'react';
+import { IoIosStar } from 'react-icons/io';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [review, setReview] = useState(0);
+  const [feedback, setFeedback] = useState({});
+  const [listfb, setListfb] = useState([]);
+  
+
+
+  const handleStar = (rating) => {
+    setReview(rating);
+    setFeedback(prevFeedback => ({ ...prevFeedback, review: rating }));
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFeedback(prevFeedback => ({ ...prevFeedback, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setListfb(prevList => [...prevList, feedback]);
+    setReview(0);
+    setFeedback({});
+  };
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="container">
+      <div className='card' style={{ textAlign: 'center',backgroundColor:"#e8e8f5" }}>
+        <h2>Your opinion matters to us!</h2>
+        <h5>How was the quality of the call?</h5>
+        <form onSubmit={handleSubmit}>
+          {[1, 2, 3, 4, 5].map((v) => (
+            <IoIosStar
+              key={v}
+              color={review >= v ? 'yellow' : 'gray'}
+              onMouseOver={() => handleStar(v)}
+            />
+          ))}
+          <br />
+          <br />
+          <textarea
+            name='feedback'
+            cols={23}
+            rows={4}
+            placeholder='Leave your message, if you want'
+            onChange={handleChange}
+            value={feedback.feedback || ''}
+          />
+          <br />
+          <br />
+          <button
+            type='submit'
+            className='btn'
+            
+          >
+            Rate now!
+          </button>
+        </form>
+        <br />
+        <br />
+        <table className="table" border={1} align='center'>
+          <thead>
+            <tr>
+              <th>Review</th>
+              <th>Message</th>
+            </tr>
+          </thead>
+          <tbody>
+            {listfb.map((v1, i) => (
+              <tr key={i}>
+                <td>
+                  {[1, 2, 3, 4, 5].map((v) => (
+                    <IoIosStar key={v} color={v1.review >= v ? 'yellow' : 'gray'} />
+                  ))}
+                </td>
+                <td>{v1.feedback}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
